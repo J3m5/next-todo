@@ -1,7 +1,14 @@
 "use client";
 
-import { ChangeEvent, ChangeEventHandler, MouseEventHandler, useState } from "react";
+import {
+  ChangeEvent,
+  ChangeEventHandler,
+  MouseEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import TodoItem from "@/app/components/todoItem";
+import { Filters } from "../page";
 
 export interface Todo {
   id: number;
@@ -9,7 +16,7 @@ export interface Todo {
   title: string;
 }
 type InputChangeEvent = ChangeEvent<HTMLInputElement>;
-type Todos = Todo[];
+type TodoList = Todo[];
 export interface TodoItemProps {
   todo: Todo;
   editing: boolean;
@@ -21,14 +28,34 @@ const onDestroy: TodoItemProps["onDestroy"] = (e) => {
   // console.log("onToggle");
 };
 
-export default function TodoList() {
+export default function TodoList({ filter }: { filter: Filters }) {
   const [editing, setEditing] = useState(false);
-  const [todos, setTodos] = useState<Todos>([{ completed: false, title: "test", id: 0 }]);
+  const [todoList, setTodos] = useState<TodoList>([
+    { completed: false, title: "test", id: 0 },
+  ]);
+
+  const [filteredTodoList, setFilteredTodoList] = useState<TodoList>(todoList);
+  useEffect(() => {
+    console.log(todoList);
+    const filteredTodoList =
+      filter === "all"
+        ? todoList
+        : todoList.filter((todo) => {
+            if (filter === "completed") {
+              return todo.completed;
+            }
+            if (filter === "active") {
+              return !todo.completed;
+            }
+            return true;
+          });
+    setFilteredTodoList(filteredTodoList);
+  }, [filter, todoList]);
 
   const checkTodo = (
     event: ChangeEvent<HTMLInputElement>,
     todoId: Todo["id"],
-    todos: Todos
+    todos: TodoList
   ) => {
     return todos.map((todo) => {
       if (todo.id === todoId) {
@@ -42,12 +69,12 @@ export default function TodoList() {
   };
 
   const onToggle: TodoItemProps["onToggle"] = (event, todoId) => {
-    setTodos(checkTodo(event, todoId, todos));
+    setTodos(checkTodo(event, todoId, todoList));
   };
 
   const TodoItems = () => (
     <ul className="todo-list">
-      {todos.map((todo) => (
+      {filteredTodoList.map((todo) => (
         <TodoItem
           todo={todo}
           onToggle={onToggle}
