@@ -8,12 +8,12 @@ export interface Todo {
   completed: boolean;
   title: string;
 }
-// const todos: Todo[] = [{ completed: false, title: "test", id: 0 }];
-
+type InputChangeEvent = ChangeEvent<HTMLInputElement>;
+type Todos = Todo[];
 export interface TodoItemProps {
   todo: Todo;
   editing: boolean;
-  onToggle: (e: ChangeEvent<HTMLInputElement>, todoId: Todo["id"]) => void;
+  onToggle: (e: InputChangeEvent, todoId: Todo["id"]) => void;
   onDestroy: MouseEventHandler<HTMLButtonElement>;
 }
 
@@ -21,24 +21,28 @@ const onDestroy: TodoItemProps["onDestroy"] = (e) => {
   // console.log("onToggle");
 };
 
-export default function () {
+export default function TodoList() {
   const [editing, setEditing] = useState(false);
-  const [todos, setTodos] = useState<Todo[]>([
-    { completed: false, title: "test", id: 0 },
-  ]);
+  const [todos, setTodos] = useState<Todos>([{ completed: false, title: "test", id: 0 }]);
 
-  const onToggle: TodoItemProps["onToggle"] = (e, todoId) => {
-    setTodos(
-      todos.map((todo) => {
-        if (todo.id === todoId) {
-          return {
-            ...todo,
-            completed: e.target.checked,
-          };
-        }
-        return todo;
-      })
-    );
+  const checkTodo = (
+    event: ChangeEvent<HTMLInputElement>,
+    todoId: Todo["id"],
+    todos: Todos
+  ) => {
+    return todos.map((todo) => {
+      if (todo.id === todoId) {
+        return {
+          ...todo,
+          completed: event.target.checked,
+        };
+      }
+      return todo;
+    });
+  };
+
+  const onToggle: TodoItemProps["onToggle"] = (event, todoId) => {
+    setTodos(checkTodo(event, todoId, todos));
   };
 
   const TodoItems = () => (

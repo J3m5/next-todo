@@ -1,15 +1,22 @@
 import classNames from "classnames";
-import { ChangeEvent, useRef, useState } from "react";
+import {
+  ChangeEvent,
+  FocusEventHandler,
+  KeyboardEventHandler,
+  MouseEventHandler,
+  useRef,
+  useState,
+} from "react";
 import type { TodoItemProps } from "@/app/components/todoList";
 
-const handleEdit = (e) => {
+const handleEdit: MouseEventHandler<HTMLLabelElement> = (e) => {
   // console.log("handleEdit");
 };
-const handleSubmit = (e) => {
+const handleSubmit: FocusEventHandler<HTMLInputElement> = (e) => {
   // console.log("handleSubmit");
 };
 
-const handleKeyDown = (e) => {
+const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (e) => {
   // console.log("handleKeyDown");
 };
 

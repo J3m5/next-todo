@@ -1,6 +1,6 @@
 import TodoList from "./components/todoList";
 
-export default function () {
+export default function Page() {
   return (
     <section className="todoapp">
       <div>
