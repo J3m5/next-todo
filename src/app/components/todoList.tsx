@@ -1,22 +1,16 @@
-"use client";
-
 import {
   ChangeEvent,
   ChangeEventHandler,
+  Dispatch,
   MouseEventHandler,
   useEffect,
   useState,
 } from "react";
 import TodoItem from "@/app/components/todoItem";
 import { Filters } from "../page";
+import { DispatchTodoList, Todo, TodoList } from "./todo";
 
-export interface Todo {
-  id: number;
-  completed: boolean;
-  title: string;
-}
 type InputChangeEvent = ChangeEvent<HTMLInputElement>;
-type TodoList = Todo[];
 export interface TodoItemProps {
   todo: Todo;
   editing: boolean;
@@ -28,11 +22,16 @@ const onDestroy: TodoItemProps["onDestroy"] = (e) => {
   // console.log("onToggle");
 };
 
-export default function TodoList({ filter }: { filter: Filters }) {
+export default function TodoList({
+  filter,
+  todoList,
+  setTodoList,
+}: {
+  filter: Filters;
+  todoList: TodoList;
+  setTodoList: DispatchTodoList;
+}) {
   const [editing, setEditing] = useState(false);
-  const [todoList, setTodos] = useState<TodoList>([
-    { completed: false, title: "test", id: 0 },
-  ]);
 
   const [filteredTodoList, setFilteredTodoList] = useState<TodoList>(todoList);
   useEffect(() => {
@@ -69,7 +68,7 @@ export default function TodoList({ filter }: { filter: Filters }) {
   };
 
   const onToggle: TodoItemProps["onToggle"] = (event, todoId) => {
-    setTodos(checkTodo(event, todoId, todoList));
+    setTodoList((previousTodoList) => checkTodo(event, todoId, previousTodoList));
   };
 
   const TodoItems = () => (
